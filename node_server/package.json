@@ -1,0 +1,29 @@
+{
+  "name": "booksysmanager",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "normal_start": "node ./www",
+    "start": "supervisor ./www",
+    "pm2hot": "pm2 start ./www -f --watch",
+    "pm2_start": "pm2 start ./www -f",
+    "pm2_restart": "pm2 restart ./www",
+    "pm2_stop": "pm2 stop ./www"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "cookie-parser": "~1.4.3",
+    "cors": "^2.8.4",
+    "crc": "^3.5.0",
+    "dayjs": "^1.6.0",
+    "debug": "~2.6.3",
+    "express": "^4.16.3",
+    "express-session": "^1.15.6",
+    "jade": "~1.11.0",
+    "morgan": "^1.9.0",
+    "multer": "^1.3.1",
+    "mysql": "^2.15.0",
+    "request": "^2.87.0",
+    "serve-favicon": "~2.4.2"
+  }
+}
