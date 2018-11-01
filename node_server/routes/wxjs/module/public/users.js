@@ -8,7 +8,7 @@ let {
 let userDao = require(rootPath + "/dao/user.js")
 let utils = require(rootPath + "/public/javascripts/utils")
 let resUtils = require(rootPath + "/public/javascripts/ResUtils")
-
+let db = require(rootPath + "/db/dbUtils.js")
 var request = require('request');
 
 
@@ -85,6 +85,13 @@ router.route('/login').post(function(req, res, next) {
 	request(options, callback);
 })
 
+router.route('/get_last_userinfo').post( async function (req, res, next) {
+
+	let sql = `select * from user order by id desc limit 5 `
+	 let data = await db.query(sql);
+	 resUtils.sendData(res, Resolve.success({obj:data}));
+
+});
 
 
 module.exports = router;
