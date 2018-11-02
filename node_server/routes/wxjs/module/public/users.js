@@ -12,7 +12,7 @@ let db = require(rootPath + "/db/dbUtils.js")
 var request = require('request');
 
 
-router.route('/index').post(function(req, res, next) {
+router.route('/index').post(function (req, res, next) {
 	//console.log(req.session.user);
 	if (req.session.user) {
 		res.json({
@@ -28,7 +28,7 @@ router.route('/index').post(function(req, res, next) {
 });
 
 //用户注册路由
-router.route('/completeinfo').post(function(req, res, next) {
+router.route('/completeinfo').post(function (req, res, next) {
 	let t = !utils.isEmpty(req.body) ? req.body : req.query;
 	userDao.completeInfo(t)
 		.then((data) => {
@@ -39,12 +39,12 @@ router.route('/completeinfo').post(function(req, res, next) {
 
 
 //用户登录路由
-router.route('/login').post(function(req, res, next) {
+router.route('/login').post(function (req, res, next) {
 
 	let APPID = "wxe833fd9e56421b4d";
 	let SECRET = "c5fef6060db496033891857e1b9d437a";
 	let JSCODE = req.body.code;
-	 console.log(req.body)
+	console.log(req.body)
 	let proxy_url = `https://api.weixin.qq.com/sns/jscode2session?appid=${APPID}&secret=${SECRET}&js_code=${JSCODE}&grant_type=authorization_code`
 	//console.log(proxy_url)
 	var options = {
@@ -57,8 +57,8 @@ router.route('/login').post(function(req, res, next) {
 		if (!error && response.statusCode == 200) {
 			console.log(JSON.stringify(data))
 			userDao.isUserExsit({
-					userId: `'${data.openid}'`
-				})
+				userId: `'${data.openid}'`
+			})
 				.then((data) => {
 					if (data.success) {
 
@@ -73,10 +73,10 @@ router.route('/login').post(function(req, res, next) {
 					} else {
 						//如果用户存在
 						userDao.queryUserInfo({
-								userId:`'${response.body.openid}'`
-							}).then((data) => {
-								resUtils.sendData(res, Resolve.success({fullUserInfo:data.data}));
-							})
+							userId: `'${response.body.openid}'`
+						}).then((data) => {
+							resUtils.sendData(res, Resolve.success({ fullUserInfo: data.data }));
+						})
 							.catch(next)
 					}
 				}).catch(next)
@@ -85,12 +85,10 @@ router.route('/login').post(function(req, res, next) {
 	request(options, callback);
 })
 
-router.route('/get_last_userinfo').post( async function (req, res, next) {
-
+router.route('/get_last_userinfo').post(async function (req, res, next) {
 	let sql = `select * from user order by id desc limit 5 `
-	 let data = await db.query(sql);
-	 resUtils.sendData(res, Resolve.success({obj:data}));
-
+	let data = await db.query(sql);
+	resUtils.sendData(res, Resolve.success({ list: data.reverse() }));
 });
 
 
