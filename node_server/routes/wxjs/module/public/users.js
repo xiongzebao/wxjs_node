@@ -86,10 +86,17 @@ router.route('/login').post(function(req, res, next) {
 })
 
 router.route('/get_last_userinfo').post( async function (req, res, next) {
+	let retdata={}
 
-	let sql = `select * from user order by id desc limit 5 `
-	 let data = await db.query(sql);
-	 resUtils.sendData(res, Resolve.success({obj:data}));
+	let sql = `select avatarUrl from user order by id desc limit 8 `
+	 let last5users = await db.query(sql);
+	 retdata.last5users = last5users;
+
+	 let sql1 = `select count(*) as num from user`
+	 let number = await db.query(sql1);
+	 retdata.num = number[0].num + 300;
+
+	 resUtils.sendData(res, Resolve.success({obj:retdata}));
 
 });
 

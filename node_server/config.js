@@ -6,6 +6,6 @@ module.exports = {
    // 'host':'xiongbin.top',//主机域名
     'host':'localhost',//主机域名
     'user':'root',//数据库连接用户名
-    'password':'123456',//数据库连接密码 
+    'password':'root',//数据库连接密码 
     'port':'3306'//数据库连接端口号
 };

@@ -23,6 +23,8 @@ router.route('/get_all_userinfo').post(function (req, res, next) {
 	}).catch(next);
 
 });
+
+
 router.route('/modifyNickName').post(function (req, res, next) {
  
 	let sql1 = `update sign 
