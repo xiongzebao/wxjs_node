@@ -10,6 +10,7 @@ var userRouter =  require("./module/auth/user.js");
 var statRouter =  require("./module/auth/stat.js");
 var msgRouter =  require("./module/auth/msg.js");
 var feedbackRouter =  require("./module/auth/feedback.js");
+var objectiveRouter =  require("./module/auth/objective.js");
 apiRoutes.use(function(req, res, next) {
 
     
@@ -50,4 +51,5 @@ apiRoutes.use("/user",userRouter)
 apiRoutes.use("/stat",statRouter)
 apiRoutes.use("/msg",msgRouter)
 apiRoutes.use("/feedback",feedbackRouter)
+apiRoutes.use("/objective",objectiveRouter)
 module.exports = apiRoutes;

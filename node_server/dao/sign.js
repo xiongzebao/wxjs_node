@@ -18,13 +18,36 @@ class SignDao {
 		if (!utils.contains(object, `nickName,isResign`)) {
 			return Promise.reject("参数错误");
 		}
- 
+
 		//查询是否有今天的记录
 		let sql = `select * from sign where  userId=${object.userId} and to_days(signDate) = to_days('${object.signDate}')`
 		let data = await db.query(sql)
 		if (data && data.length > 0) {
 			return Resolve.fail("您今天已签到");
 		}
+
+		//检查是否有正在进行的持戒目标
+		let sql = `select * from objective where userId = ${req.body.userId} and state= 2`
+		let result = await db.query(sql)
+		if (result.length != 0) {
+			let objective = result[0]
+			//dayjs(objective.createTime).add(objective.days,"day")
+			//	let endTime = dayjs(objective.createTime).add(objective.days,"day");
+			let days = objective.days;
+			let startTime = objective.createTime;
+			let progressDays = dayjs().diff(startTime, "day")
+			let progress = progressDays/days;
+			 let state = progress==1?1:2
+
+		
+			let sql = `update objective set progress = ${progress},state = ${state} where userId = ${req.body.userId} and state =2`
+			 
+			
+			db.query(sql)
+				return;
+		}
+
+
 		let currentTime = dayjs().format("YYYY-MM-DD HH:mm:ss");
 		object.createOn = currentTime;
 		let insertResult = await db.insert("sign", object)
@@ -35,52 +58,52 @@ class SignDao {
 	}
 
 	//查询用户所有签到信息
-    // queryFlag:1查询所有，2，查询最近n天,3,按月份查询格式必须是类似2018-06格式
-  async	getSignInfo(object) {
-  			//console.log(object)
-			if (!utils.contains(object, "userId,queryFlag")) {
-				throw new Error("invalid param")
-			}
-			//查询所有 
-			if (object.queryFlag == 1) {
-				let sql = `select DATE_FORMAT(signDate,'%Y-%m-%d') as signDate,signState,signComment from sign where  userId  = ${object.userId}`
-				let data = await db.query(sql)
-				return data;
-			}
-			//查询最近n天
-			if (object.queryFlag == 2) {
-				return this.querylastdays(object)
-			}
-			if (object.queryFlag == 3) {
-				return this.queryByMonth(object);
-			}
-			if(object.queryFlag == 4){
+	// queryFlag:1查询所有，2，查询最近n天,3,按月份查询格式必须是类似2018-06格式
+	async	getSignInfo(object) {
+		//console.log(object)
+		if (!utils.contains(object, "userId,queryFlag")) {
+			throw new Error("invalid param")
+		}
+		//查询所有 
+		if (object.queryFlag == 1) {
+			let sql = `select DATE_FORMAT(signDate,'%Y-%m-%d') as signDate,signState,signComment from sign where  userId  = ${object.userId}`
+			let data = await db.query(sql)
+			return data;
+		}
+		//查询最近n天
+		if (object.queryFlag == 2) {
+			return this.querylastdays(object)
+		}
+		if (object.queryFlag == 3) {
+			return this.queryByMonth(object);
+		}
+		if (object.queryFlag == 4) {
 
 
-			}
+		}
 	}
 
-	async queryHasSignedNumber(object){
-		let sql="";
-		let signState=""
-		if(object.signState){
+	async queryHasSignedNumber(object) {
+		let sql = "";
+		let signState = ""
+		if (object.signState) {
 			signState = `signState=${object.signState} and`
 		}
-		 sql = `SELECT  COUNT(*) as number FROM sign WHERE ${signState} userId= ${object.userId}`;
+		sql = `SELECT  COUNT(*) as number FROM sign WHERE ${signState} userId= ${object.userId}`;
 		let data = await db.query(sql)
 		return data[0].number;
 	}
 
-	async queryByMonth(object){
-			if (!utils.contains(object, "yearmonth")) {
-					throw new Error("invalid param")
-				}
-				let sql = `select DATE_FORMAT(signDate,'%Y-%m-%d') as signDate,signState,signComment 
+	async queryByMonth(object) {
+		if (!utils.contains(object, "yearmonth")) {
+			throw new Error("invalid param")
+		}
+		let sql = `select DATE_FORMAT(signDate,'%Y-%m-%d') as signDate,signState,signComment 
 					 from sign 
 					where  userId  = ${object.userId} and date_format(signDate,'%Y-%m')='${object.yearmonth}'`
-				//console.log(sql)
-				let data = await db.query(sql)
-				return data;
+		//console.log(sql)
+		let data = await db.query(sql)
+		return data;
 	}
 
 	//查询最近几天的签到信息 私有
@@ -92,7 +115,7 @@ class SignDao {
 			let userinfo = await userDao.queryUserInfo({
 				userId: object.userId
 			});
-			let sql = `SELECT DATE_FORMAT(signDate,'%Y-%m-%d') as signDate ,signComment FROM sign WHERE userId=${object.userId} and DATE_SUB(curdate(), INTERVAL ${object.lastDays-1} DAY) <= DATE(signDate) and DATE(signDate) >= DATE('${userinfo.data.dateTime}')`;
+			let sql = `SELECT DATE_FORMAT(signDate,'%Y-%m-%d') as signDate ,signComment FROM sign WHERE userId=${object.userId} and DATE_SUB(curdate(), INTERVAL ${object.lastDays - 1} DAY) <= DATE(signDate) and DATE(signDate) >= DATE('${userinfo.data.dateTime}')`;
 			let data = await db.query(sql)
 			console.log(data)
 			return Promise.resolve(data)
