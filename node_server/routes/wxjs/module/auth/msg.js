@@ -29,7 +29,8 @@ router.route('/add_msg').post(function(req, res, next) {
 });
 
 router.route("/get_msg").post(function(req, res, next){
-	let sql = "select * from msg"
+	let sql = "select nickName,content,DATE_FORMAT(createTime,'%Y-%m-%d') as createTime ,avatarUrl from msg"
+
 	db.query(sql).then(data=>{
 		console.log(data)
 		resUtils.sendData(res,Resolve.success({list:data}));

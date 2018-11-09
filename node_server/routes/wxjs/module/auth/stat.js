@@ -161,10 +161,9 @@ router.route('/get_sign_detail').post(async function (req, res, next) {
 		list.push(item)
 		registdayjs = registdayjs.add(1, 'month');
 	}
-	let note = `
-		1,您一共签到${data.allSignDays}天，其中已完成${data.completeDays}天,未完成${data.unCompleteDays}天\n
-		2,最近一个月已完成${data.latest30CompleteDays}天，未完成${data.latest30UnCompleteDays}天,积累了${data.latest30spiritValue}精气值\n
-		3,自参与持戒计划，您共积累了${data.allSpiritValue}精气值\n
+	let note = `1,您一共签到${data.allSignDays}天，其中已完成${data.completeDays}天,未完成${data.unCompleteDays}天
+		2,最近一个月已完成${data.latest30CompleteDays}天，未完成${data.latest30UnCompleteDays}天,积累了${data.latest30spiritValue}精气值
+		3,自参与持戒计划，您共积累了${data.allSpiritValue}精气值
 	`;
 	if (data.latest30spiritValue >= normalSpiritValue) {
 		note += "4,您已经精气正常\n"
@@ -178,7 +177,7 @@ router.route('/get_sign_detail').post(async function (req, res, next) {
 	data.note = note;
 	let weekUnCompleteNums = []
 	for (var i = 0; i <= 6; i++) {
-		let sql = `SELECT  COUNT(*) as number FROM SIGN WHERE  WEEKDAY(signDate)=${i} AND signState =2 and userId = ${object.userId}`
+		let sql = `SELECT  COUNT(*) as number FROM sign WHERE  WEEKDAY(signDate)=${i} AND signState =2 and userId = ${object.userId}`
 		let data = await db.query(sql)
 		weekUnCompleteNums.push(data[0].number)
 	}
@@ -194,16 +193,20 @@ router.route('/getXinDe').post(async function (req, res, next) {
 	resUtils.sendData(res, Resolve.success({ list: data }));
 });
 
+//全局统计
 router.route('/get_all_sign_detail').post(async function (req, res, next) {
 	let weekUnCompleteNums = []
 	let reason = []
 	for (var i = 0; i <= 6; i++) {
-		let sql = `SELECT  COUNT(*) as number FROM SIGN WHERE  WEEKDAY(signDate)=${i} AND signState =2`
+		let sql = `SELECT  COUNT(*) as number FROM sign WHERE  WEEKDAY(signDate)=${i} AND signState =2`
 		let data = await db.query(sql)
 		weekUnCompleteNums.push(data[0].number)
 	}
+
+
+
 	for (var i = 0; i <= 4; i++) {
-		let sql = `SELECT  COUNT(*) as number FROM SIGN WHERE  signState =2 and reason =${i}`
+		let sql = `SELECT  COUNT(*) as number FROM sign WHERE  signState =2 and reason =${i}`
 		let data = await db.query(sql)
 		reason.push(data[0].number)
 	}
@@ -216,13 +219,9 @@ router.route('/get_all_sign_detail').post(async function (req, res, next) {
 router.route('/get_home_spirit').post(async function (req, res, next) {
 	let object = req.body
 	let retdata = {};
- 
-
 	//精气容量
 	retdata.totalValue = 120;
-
 	//最近60天精气值
-
 	object.lastDays = 60;
 	let sql = `SELECT  COUNT(*) as number  FROM sign WHERE signState=1 and userId=${object.userId} and DATE_SUB(curdate(), INTERVAL ${object.lastDays} DAY) <= DATE(signDate)`;
 	let recent30daysNum = await db.query(sql)
@@ -232,7 +231,6 @@ router.route('/get_home_spirit').post(async function (req, res, next) {
 	let unCompleteNum = await db.query(sql)
 	retdata.latest30UnCompleteDays = unCompleteNum[0].number;
 	retdata.value = retdata.latest30CompleteDays * spiritAdd - (retdata.latest30UnCompleteDays) * spiritReduce
-
 	resUtils.sendData(res, Resolve.success({ obj: retdata }));
 });
 

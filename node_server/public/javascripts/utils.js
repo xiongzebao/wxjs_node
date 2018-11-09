@@ -1,3 +1,6 @@
+
+
+
 Array.prototype.contains = function(element) {
 	for (var i = 0; i < this.length; i++) {
 		if (this[i] == element) {
@@ -91,8 +94,15 @@ let utils = {
 		}else{
 			return "https://xiongbin.top"
 		}
+	},
 
-
+	getMySqlPwd(){
+		console.log(process.env.NODE_ENV)
+		if(process.env.NODE_ENV=="development"){
+			return "123456"
+		}else{
+			return "root"
+		}
 	}
 
 }

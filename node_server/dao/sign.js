@@ -27,25 +27,21 @@ class SignDao {
 		}
 
 		//检查是否有正在进行的持戒目标
-		let sql = `select * from objective where userId = ${req.body.userId} and state= 2`
-		let result = await db.query(sql)
-		if (result.length != 0) {
-			let objective = result[0]
-			//dayjs(objective.createTime).add(objective.days,"day")
-			//	let endTime = dayjs(objective.createTime).add(objective.days,"day");
-			let days = objective.days;
-			let startTime = objective.createTime;
-			let progressDays = dayjs().diff(startTime, "day")
-			let progress = progressDays/days;
-			 let state = progress==1?1:2
-
-		
-			let sql = `update objective set progress = ${progress},state = ${state} where userId = ${req.body.userId} and state =2`
-			 
-			
-			db.query(sql)
-				return;
-		}
+		// let sql1 = `select * from objective where userId = ${req.body.userId} and state= 2`
+		// let result = await db.query(sql1)
+		// if (result.length != 0) {
+		// 	let objective = result[0]
+		// 	//dayjs(objective.createTime).add(objective.days,"day")
+		// 	//	let endTime = dayjs(objective.createTime).add(objective.days,"day");
+		// 	let days = objective.days;
+		// 	let startTime = objective.createTime;
+		// 	let progressDays = dayjs().diff(startTime, "day")
+		// 	let progress = progressDays/days;
+		// 	 let state = progress==1?1:2
+		// 	let sql = `update objective set progress = ${progress},state = ${state} where userId = ${req.body.userId} and state =2`
+		// 	db.query(sql)
+		// 		return;
+		// }
 
 
 		let currentTime = dayjs().format("YYYY-MM-DD HH:mm:ss");

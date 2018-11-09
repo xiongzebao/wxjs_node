@@ -1,3 +1,9 @@
+
+
+
+
+//process.env.NODE_ENV = 'development';
+process.env.NODE_ENV = 'product';
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -13,12 +19,6 @@ var errorLogger = require("./dao/error.js")
 var utils = require("./public/javascripts/utils.js")
 var app = express();
 
-
-
-
-
-process.env.NODE_ENV = 'development';
-//process.env.NODE_ENV = 'product';
 app.use(logger('dev')); // 使用 morgan 将请求日志输出到控制台
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

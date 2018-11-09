@@ -85,7 +85,6 @@ router.route('/login').post(function (req, res, next) {
 	request(options, callback);
 })
 
-<<<<<<< HEAD
 router.route('/get_last_userinfo').post( async function (req, res, next) {
 	let retdata={}
 
@@ -99,12 +98,6 @@ router.route('/get_last_userinfo').post( async function (req, res, next) {
 
 	 resUtils.sendData(res, Resolve.success({obj:retdata}));
 
-=======
-router.route('/get_last_userinfo').post(async function (req, res, next) {
-	let sql = `select * from user order by id desc limit 5 `
-	let data = await db.query(sql);
-	resUtils.sendData(res, Resolve.success({ list: data.reverse() }));
->>>>>>> 9a30fbc12399134dae1700f74193cc8cf4a78eca
 });
 
 
