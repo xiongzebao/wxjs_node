@@ -1,5 +1,6 @@
 process.env.NODE_ENV = 'development';
 //process.env.NODE_ENV = 'product';
+
 var path = require("path");
 const rootPath = path.dirname(require.main.filename);
 let utils = require(rootPath + "/public/javascripts/utils")

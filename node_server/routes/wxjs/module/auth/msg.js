@@ -17,27 +17,48 @@ let resUtils = require(rootPath + "/public/javascripts/ResUtils")
 
 let dayjs = require("dayjs");
 
-router.route('/add_msg').post(function(req, res, next) {
+router.route('/add_msg').post(async function(req, res, next) {
 	let currentTime = dayjs().format("YYYY-MM-DD HH:mm:ss");
 	/* if(!utils.contains(req.body,"errorInfo,errorCode,errorType")){
 	 	resUtils.sendError(res,"参数错误"+req.body)
 	 	return;
 	 }*/
-	 req.body.createTime = currentTime;
-	 db.insert("msg",req.body);
+	 let sql = `select * from user where userId = ${req.body.userId}`
+	 let data = await db.query(sql)
+	  console.log(data)
+	  let u = data[0]
+    
+	 let t={}
+	 t.userId = u.userId;
+	 t.level = u.level
+	 t.nickName = u.nickName
+	 t.admin = u.admin
+	 t.avatarUrl = u.avatarUrl
+	 t.content = req.body.content
+	 t.createTime = currentTime;
+	 t.gender = u.gender;
+
+	 db.insert("msg",t);
 	 resUtils.sendData(res,Resolve.success("操作成功"));
 });
 
 router.route("/get_msg").post(function(req, res, next){
-	let sql = "select nickName,content,DATE_FORMAT(createTime,'%Y-%m-%d') as createTime ,avatarUrl from msg"
+	let sql = "select id, userId, nickName,content,DATE_FORMAT(createTime,'%Y-%m-%d') as createTime,avatarUrl,`admin`, level,gender from msg where del <> 1"
 
 	db.query(sql).then(data=>{
 		console.log(data)
 		resUtils.sendData(res,Resolve.success({list:data}));
-	}).catch(next)
-	  
+	}).catch(next) 
 })
 
+router.route("/del_msg").post(function(req, res, next){
+	let sql = " update msg set del = 1 where id = "+req.body.id;
+
+	db.query(sql).then(data=>{
+		console.log(data)
+		resUtils.sendData(res,Resolve.success("删除成功"));
+	}).catch(next) 
+})
 
 
 

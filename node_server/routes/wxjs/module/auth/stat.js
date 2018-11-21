@@ -70,6 +70,9 @@ router.route('/get_stat_info').post(function (req, res, next) {
 			item.nickName = userlist[i].nickName;
 			item.avatarUrl = userlist[i].avatarUrl;
 			item.gender = userlist[i].gender;
+			item.level= userlist[i].level;
+			item.admin= userlist[i].admin;
+			
 
 			item.signNum = count[0].num
 

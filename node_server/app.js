@@ -2,8 +2,7 @@
 
 
 
-//process.env.NODE_ENV = 'development';
-process.env.NODE_ENV = 'product';
+
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -136,17 +135,31 @@ var db = require("./db/dbUtils.js")
 
 // 单图上传
 app.post('/upload', upload.single('logo'), function (req, res, next) {
-  let filepath =  utils.getHostURL() + "/uploads/" + req.filename
-  let userId = req.body.userId
-  console.log(userId)
-  let sql = `UPDATE user SET avatarUrl = '${filepath}' WHERE userId='${userId}'`
-  db.query(sql, (data) => {
-    resUtils.sendData(res,Resolve.success("更改图像成功"));
-  })
-  let sql1 = `UPDATE msg SET avatarUrl = '${filepath}' WHERE userId='${userId}'`
-  db.query(sql1, (data) => {
    
-  })
+  let filepath =  utils.getHostURL() + "/uploads/" + req.filename
+  if(req.body.type=="logo"){
+    let userId = req.body.userId
+    console.log(userId)
+    let sql = `UPDATE user SET avatarUrl = '${filepath}' WHERE userId='${userId}'`
+    db.query(sql, (data) => {
+      resUtils.sendData(res,Resolve.success("更改图像成功"));
+    })
+    let sql1 = `UPDATE msg SET avatarUrl = '${filepath}' WHERE userId='${userId}'`
+    db.query(sql1, (data) => {
+    })
+    return
+  }
+
+  console.log(req.body)
+  if(req.body.type=="homePic"){
+    let sql = `UPDATE extra SET homePicUrl = '${filepath}'`
+    db.query(sql, (data) => {
+      resUtils.sendData(res,Resolve.success("更改成功"));
+    })
+     return
+  }
+
+
 
 });
 

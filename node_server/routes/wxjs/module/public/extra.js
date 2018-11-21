@@ -32,6 +32,22 @@ router.route('/get_extra_info').post(function (req, res, next) {
 
 });
 
+router.route('/set_extra_info').post(function (req, res, next) {
+	let extradata = req.body.extra;
+	let sql = ` update extra set notice ='${extradata.notice}',
+	showNotice =${extradata.showNotice},
+	showMessageBoard =${extradata.showMessageBoard},
+	showNoteInput =${extradata.showNoteInput},
+	showHomePic =${extradata.showHomePic},
+	showSwiper =${extradata.showSwiper},
+	showHomeTip =${extradata.showHomeTip}`
+	db.query(sql).then(data => {
+		resUtils.sendData(res, Resolve.success("配置修改成功"));
+	}).catch(next)
+
+});
+
+
 router.route('/get_swiper_info').post(function (req, res, next) {
 	let sql = "select * from swiper"
 	db.query(sql).then(data => {
